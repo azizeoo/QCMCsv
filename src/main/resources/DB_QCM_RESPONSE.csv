@@ -1,0 +1,41 @@
+QUESTION_ID¤RESPONSE_ID¤LIBELLE¤IS_CORRECT
+1¤1¤Servlet¤false
+1¤2¤JDBC¤true
+1¤3¤XML¤false
+1¤4¤SQL¤false
+1¤5¤Oracle¤false
+2¤6¤Singleton¤false
+2¤7¤MVC¤false
+2¤8¤DAO¤true
+2¤9¤MVP¤false
+3¤10¤/**   **/¤true
+3¤11¤/*  */¤false
+3¤12¤//¤false
+3¤13¤< !-- -->¤false
+4¤14¤Méthode 1 : public boolean isEmpty(){ if (size == 0){ return true;} else { return false;}}¤false
+4¤15¤Méthode 2 : public boolean isEmpty(){ if (size == 0){ return true;} return false;}¤false
+4¤16¤Méthode 3 : public boolean isEmpty(){ return size == 0;}¤true
+4¤17¤Méthode 4 : public boolean isEmpty(){ return size == 0?true:false;}¤false
+5¤18¤ma_constante¤false
+5¤19¤maConstante¤false
+5¤20¤MA_CONSTANTE¤true
+5¤21¤MaConstante¤false
+6¤22¤Il affiche « 0 »¤false
+6¤23¤Lève un NullPointerException¤true
+6¤24¤Ça ne compile pas !¤false
+7¤25¤Il affiche « i »¤false
+7¤26¤additionner()¤true
+7¤27¤additionner(1)¤true
+7¤28¤additionner(1,2,3)¤true
+7¤29¤additionner({4,5,6})¤true
+7¤30¤additionner(1,2,3, {4,5,6})¤false
+8¤31¤If(maChaine.isEmpty()){…}¤false
+8¤32¤If(« ».equals(maChaine)){…}¤true
+8¤33¤If(maChaine.equals(« »)){…}¤false
+8¤34¤If(maChaine==« ») {…}¤false
+9¤35¤Une métadonnée du code Java¤true
+9¤36¤Un type de commentaire Java particulier¤false
+9¤37¤Un élément qu’on place dans le code pour ne pas oublier de faire une correction plus tard¤false
+10¤38¤Une librairie java fortement utilisé en J2EE¤false
+10¤39¤Une API Java permettant de créer des interfaces graphiques¤true
+10¤40¤Un design Pattern permettant de séparer les traitements de l’affichage¤false

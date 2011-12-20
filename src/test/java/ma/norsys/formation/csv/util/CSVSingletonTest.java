@@ -1,5 +1,8 @@
 package ma.norsys.formation.csv.util;
 
+import static ma.norsys.formation.csv.constants.IConstants.FILE_NAME_QUESTION_TEST;
+import static ma.norsys.formation.csv.constants.IConstants.FILE_NAME_RESPONSE_TEST;
+import static ma.norsys.formation.csv.constants.IConstants.FILE_NAME_TOPIC_TEST;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -8,10 +11,10 @@ import java.io.File;
 import java.util.List;
 
 import ma.norsys.formation.entities.Question;
+import ma.norsys.formation.entities.Topic;
 
 import org.junit.Before;
 import org.junit.Test;
-import static ma.norsys.formation.csv.constants.IConstants.*;
 
 public class CSVSingletonTest {
 	CSVSingleton singleton;
@@ -46,7 +49,7 @@ public class CSVSingletonTest {
 		final String fileName = FILE_NAME_QUESTION_TEST;
 
 		// Result
-		final int nombreLigne = 4;
+		final int nombreLigne = 3;
 
 		// Appel
 		final File file = singleton.getResource(fileName);
@@ -60,13 +63,29 @@ public class CSVSingletonTest {
 	public void listQuestionsTest() throws Exception {
 		// Param
 		final int nombre = 2;
-		final File fileQuestion = singleton.getResource(FILE_NAME_QUESTION_TEST);
-		final File fileResponse = singleton.getResource(FILE_NAME_RESPONSE_TEST);
+		final File fileQuestion = singleton
+				.getResource(FILE_NAME_QUESTION_TEST);
+		final File fileResponse = singleton
+				.getResource(FILE_NAME_RESPONSE_TEST);
+		final File fileTopic = singleton.getResource(FILE_NAME_TOPIC_TEST);
 		List<String> linesQuestion = singleton.readFile(fileQuestion);
 		List<String> linesResponse = singleton.readFile(fileResponse);
-		List<Question> listeQuestion = (List<Question>)singleton.listQuestions(linesQuestion,linesResponse);
+		List<String> linesTopic = singleton.readFile(fileTopic);
+		List<Question> listeQuestion = (List<Question>) singleton
+				.listQuestions(linesTopic, linesQuestion, linesResponse);
 		assertNotNull(listeQuestion);
 		assertEquals(nombre, listeQuestion.size());
 	}
+	
+	@Test
+	public void listTopicsTest() throws Exception {
+		// Param
+		final int nombre = 1;
+		final File fileTopic = singleton.getResource(FILE_NAME_TOPIC_TEST);
 
+		List<String> linesTopic = singleton.readFile(fileTopic);
+		List<Topic> listeTopic = (List<Topic>) singleton.listTopics(linesTopic);
+		assertNotNull(listeTopic);
+		assertEquals(nombre, listeTopic.size());
+	}
 }
