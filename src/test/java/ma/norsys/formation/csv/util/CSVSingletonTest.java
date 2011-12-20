@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.List;
 
-import ma.norsys.formation.entities.Question;
 import ma.norsys.formation.entities.Topic;
 
 import org.junit.Before;
@@ -60,9 +59,9 @@ public class CSVSingletonTest {
 	}
 
 	@Test
-	public void listQuestionsTest() throws Exception {
+	public void getListTopicsTest() throws Exception {
 		// Param
-		final int nombre = 2;
+		final int nombre = 1;
 		final File fileQuestion = singleton
 				.getResource(FILE_NAME_QUESTION_TEST);
 		final File fileResponse = singleton
@@ -71,21 +70,9 @@ public class CSVSingletonTest {
 		List<String> linesQuestion = singleton.readFile(fileQuestion);
 		List<String> linesResponse = singleton.readFile(fileResponse);
 		List<String> linesTopic = singleton.readFile(fileTopic);
-		List<Question> listeQuestion = (List<Question>) singleton
-				.listQuestions(linesTopic, linesQuestion, linesResponse);
-		assertNotNull(listeQuestion);
-		assertEquals(nombre, listeQuestion.size());
-	}
-	
-	@Test
-	public void listTopicsTest() throws Exception {
-		// Param
-		final int nombre = 1;
-		final File fileTopic = singleton.getResource(FILE_NAME_TOPIC_TEST);
-
-		List<String> linesTopic = singleton.readFile(fileTopic);
-		List<Topic> listeTopic = (List<Topic>) singleton.listTopics(linesTopic);
+		List<Topic> listeTopic = (List<Topic>) singleton.getListTopics(linesTopic, linesQuestion, linesResponse);
 		assertNotNull(listeTopic);
 		assertEquals(nombre, listeTopic.size());
 	}
+
 }

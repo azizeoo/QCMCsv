@@ -79,76 +79,19 @@ public class CSVSingleton {
 	}
 
 	/**
-	 * Méthode pour retourner la liste des questions
-	 * 
-	 * @param linesTopic
-	 * @param linesQuestion
-	 * @param linesResponse
-	 * @return (List<Question>) liste des questions
-	 */
-	public List<Question> listQuestions(List<String> linesTopic,
-			List<String> linesQuestion, List<String> linesResponse) {
-		boolean indiceR = true;
-		boolean indiceQ = true;
-		boolean indiceT = true;
-		List<Response> listeReponse = null;
-		List<Question> listQuestion = new ArrayList<Question>();
-		LOGGER.debug("listQuestions(List<String> " + linesTopic.size()
-				+ ",List<String> " + linesQuestion.size() + ", List<String> "
-				+ linesResponse.size() + ")");
-
-		for (String lineQ : linesQuestion) {
-			String[] stringsQ = lineQ.split(SEPARTOR);
-			if (indiceQ) {
-				indiceQ = false;
-				continue;
-			}
-			Question question = getQuestion(stringsQ);
-			// int sizeLinesResponse = linesResponse.size() - 1;
-			indiceR = true;
-			listeReponse = new ArrayList<Response>();
-			for (String lineR : linesResponse) {
-				String[] stringsR = lineR.split(SEPARTOR);
-				if (indiceR) {
-					indiceR = false;
-					continue;
-				}
-				if (question.getIdQuestion() == Long.valueOf(stringsR[0])) {
-					listeReponse.add(getResponse(stringsR));
-				}
-			}
-			indiceT = true;
-			for (String lineT : linesTopic) {
-				String[] stringsT = lineT.split(SEPARTOR);
-				if (indiceT) {
-					indiceT = false;
-					continue;
-				}
-				Topic topic = getTopic(stringsT);
-				if (question.getTopic().getIdTopic() == Long
-						.valueOf(stringsT[0])) {
-					question.setTopic(topic);
-					break;
-				}
-			}
-			question.setLesReponses(listeReponse);
-			listQuestion.add(question);
-		}
-
-		LOGGER.debug("listQuestions() return (taille)" + listQuestion.size());
-		return listQuestion;
-
-	}
-
-	/**
 	 * Méthode pour retourner la liste des topics
 	 * 
 	 * @param linesTopic
 	 * @return (List<Topic>) liste des topics
 	 */
-	public List<Topic> listTopics(List<String> linesTopic) {
-		LOGGER.debug("listTopics(List<String> " + linesTopic.size() + ")");
+
+	public List<Topic> getListTopics(List<String> linesTopic,
+			List<String> linesQuestion, List<String> linesResponse) {
+		LOGGER.debug("getListTopics(List<String> " + linesTopic.size()
+				+ ",List<String> " + linesQuestion.size() + ", List<String> "
+				+ linesResponse.size() + ")");
 		boolean indiceT = true;
+		List<Question> listQuestion = null;
 		List<Topic> listTopic = new ArrayList<Topic>();
 		for (String lineT : linesTopic) {
 			String[] stringsT = lineT.split(SEPARTOR);
@@ -156,9 +99,14 @@ public class CSVSingleton {
 				indiceT = false;
 				continue;
 			}
-			listTopic.add(getTopic(stringsT));
+			Topic topic = getTopic(stringsT);
+			listQuestion = getListQuestionsByTopic(topic, linesQuestion,
+					linesResponse);
+			topic.setLesQuestions(listQuestion);
+			listTopic.add(topic);
 		}
-		LOGGER.debug("listTopics() return (taille)" + listTopic.size());
+
+		LOGGER.debug("getListTopics() return (taille)" + listQuestion.size());
 		return listTopic;
 
 	}
@@ -171,7 +119,6 @@ public class CSVSingleton {
 	 */
 	private Question getQuestion(String[] line) {
 		Question question = new Question();
-		question.setTopic(new Topic(Long.valueOf(line[0]), null));
 		question.setIdQuestion(Long.valueOf(line[1]));
 		question.setLibelle(line[2]);
 		LOGGER.debug("taille " + line.length);
@@ -220,5 +167,58 @@ public class CSVSingleton {
 				+ fileName;
 		LOGGER.debug("getResourcePath() return " + dossierPath + "");
 		return dossierPath;
+	}
+
+	/**
+	 * Méthode permet de récuperer la liste des réponses par question
+	 * 
+	 * @param question
+	 * @param linesResponse
+	 * @return (List<Response>) liste des réponses
+	 */
+	private List<Response> getListReponsesByQuestion(Question question,
+			List<String> linesResponse) {
+		List<Response> listeReponse = new ArrayList<Response>();
+		boolean indiceR = true;
+		for (String lineR : linesResponse) {
+			String[] stringsR = lineR.split(SEPARTOR);
+			if (indiceR) {
+				indiceR = false;
+				continue;
+			}
+			if (question.getIdQuestion() == Long.valueOf(stringsR[0])) {
+				listeReponse.add(getResponse(stringsR));
+			}
+		}
+		return listeReponse;
+	}
+
+	/**
+	 * Méthode permet de récuperer la liste des questions par topic
+	 * 
+	 * @param topic
+	 * @param linesQuestion
+	 * @param linesResponse
+	 * @return (List<Question>) liste des question
+	 */
+	private List<Question> getListQuestionsByTopic(Topic topic,
+			List<String> linesQuestion, List<String> linesResponse) {
+		List<Response> listeReponse;
+		List<Question> listeQuestion = new ArrayList<Question>();
+		boolean indiceQ = true;
+		for (String lineQ : linesQuestion) {
+			String[] stringsQ = lineQ.split(SEPARTOR);
+			if (indiceQ) {
+				indiceQ = false;
+				continue;
+			}
+			Question question = getQuestion(stringsQ);
+			listeReponse = getListReponsesByQuestion(question, linesResponse);
+			if (topic.getIdTopic() == Long.valueOf(stringsQ[0])) {
+				question.setLesReponses(listeReponse);
+				listeQuestion.add(question);
+			}
+		}
+		return listeQuestion;
 	}
 }
