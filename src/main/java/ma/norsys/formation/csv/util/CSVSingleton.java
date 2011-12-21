@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ma.norsys.formation.entities.Question;
+import ma.norsys.formation.entities.Questionnaire;
 import ma.norsys.formation.entities.Response;
+import ma.norsys.formation.entities.Subscriber;
 import ma.norsys.formation.entities.Topic;
 
 import org.apache.log4j.Logger;
@@ -110,7 +112,33 @@ public class CSVSingleton {
 		return listTopic;
 
 	}
+	/**
+	 * Méthode pour retourner la liste des questionnaires
+	 * 
+	 * @param linesTopic
+	 * @return (List<Questionnaire>) liste des questionnaire
+	 */
 
+	public List<Questionnaire> getListQuestionnaires(List<String> linesQuestionnaire, List<String> linesSubscriber){
+		LOGGER.debug("getListQuestionnaires(List<String> " + linesQuestionnaire.size()+ ",List<String> " + linesSubscriber.size() + ")");
+		boolean indiceQ = true;
+		List<Subscriber> listSubscriber = null;
+		List<Questionnaire> listQuestionnaires = new ArrayList<Questionnaire>();
+		for (String lineQ : linesQuestionnaire) {
+			String[] stringsQ = lineQ.split(SEPARTOR);
+			if (indiceQ) {
+				indiceQ = false;
+				continue;
+			}
+			Questionnaire questionnaire = getQuestionnaire(stringsQ);
+			listSubscriber = getListSubscribersByQuestionnaire(questionnaire, linesSubscriber);
+			questionnaire.setSubscribers(listSubscriber);
+			listQuestionnaires.add(questionnaire);
+		}
+		LOGGER.debug("getListQuestionnaires() return (taille)" + listQuestionnaires.size());
+		return listQuestionnaires;
+		
+	}
 	/**
 	 * Méthode pour générer un objet question à partir d'une ligne donnée
 	 * 
@@ -153,7 +181,34 @@ public class CSVSingleton {
 		LOGGER.debug("taille " + line.length);
 		return topic;
 	}
-
+	/**
+	 * Méthode pour générer un objet questionnaire à partir d'une ligne donnée
+	 * 
+	 * @param line
+	 * @return (Questionnaire) questionnaire retourné
+	 */
+	private Questionnaire getQuestionnaire(String[] line) {
+		Questionnaire questionnaire = new Questionnaire();
+		questionnaire.setIdQuestionnaire(Long.valueOf(line[0]));
+		questionnaire.setTopic(new Topic(Long.valueOf(line[1]), null));
+		LOGGER.debug("taille " + line.length);
+		return questionnaire;
+	}
+	/**
+	 * Méthode pour générer un objet Subscriber à partir d'une ligne donnée
+	 * 
+	 * @param line
+	 * @return (Subscriber) subscriber retourné
+	 */
+	private Subscriber getSubscriber(String[] line) {
+		Subscriber subscriber = new Subscriber();
+		subscriber.setIdSubscriber(Long.valueOf(line[1]));
+		subscriber.setFirstName(line[2]);
+		subscriber.setLastName(line[3]);
+		subscriber.setEmail(line[4]);
+		LOGGER.debug("taille " + line.length);
+		return subscriber;
+	}	
 	/**
 	 * Méthode pour récupérer le chemin absolu d'un fichier .csv
 	 * 
@@ -221,4 +276,27 @@ public class CSVSingleton {
 		}
 		return listeQuestion;
 	}
+	/**
+	 * Méthode permet de récuperer la liste des Subscriber par questionnaire
+	 * 
+	 * @param questionnaire
+	 * @param linesSubscriber
+	 * @return (List<Subscriber>) liste des Subscribers
+	 */
+	private List<Subscriber> getListSubscribersByQuestionnaire(Questionnaire questionnaire, List<String> linesSubscriber) {
+		List<Subscriber> listeSubscriber = new ArrayList<Subscriber>();
+		boolean indiceS = true;
+		for (String lineS : linesSubscriber) {
+			String[] stringsS = lineS.split(SEPARTOR);
+			if (indiceS) {
+				indiceS = false;
+				continue;
+			}
+			if (questionnaire.getIdQuestionnaire() == Long.valueOf(stringsS[0])) {
+				listeSubscriber.add(getSubscriber(stringsS));
+			}
+		}
+		return listeSubscriber;
+	}
+	
 }
